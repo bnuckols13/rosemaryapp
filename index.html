@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Way of the Bodhisattva - Interactive Study Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --earth-clay: #B85C38;
+            --warm-terracotta: #D2691E;
+            --sage-green: #87A878;
+            --soft-sage: #A8C09A;
+            --earth-brown: #6B4423;
+            --warm-sand: #E8D5C4;
+            --cream: #FFF8E7;
+            --deep-forest: #3D5941;
+            --rust: #A0522D;
+            --stone-gray: #6B6B6B;
+            --parchment: #F5E6D3;
+            --moss: #8B9D83;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: linear-gradient(135deg, #F5E6D3 0%, #E8D5C4 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--earth-brown);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 157, 131, 0.03) 2px,
+                    rgba(139, 157, 131, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 248, 231, 0.9) 0%, rgba(245, 230, 211, 0.9) 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(107, 68, 35, 0.1);
+            border: 1px solid rgba(139, 157, 131, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--earth-brown);
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: var(--stone-gray);
+            font-size: 1.1rem;
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        .nav-pills {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .nav-pill {
+            padding: 0.75rem 2rem;
+            border-radius: 30px;
+            background: rgba(255, 248, 231, 0.95);
+            border: 2px solid var(--moss);
+            color: var(--earth-brown);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            box-shadow: 0 4px 15px rgba(107, 68, 35, 0.1);
+        }
+
+        .nav-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 68, 35, 0.15);
+            background: rgba(245, 230, 211, 0.95);
+        }
+
+        .nav-pill.active {
+            background: linear-gradient(135deg, var(--sage-green) 0%, var(--soft-sage) 100%);
+            color: white;
+            border-color: var(--deep-forest);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255, 248, 231, 0.95) 0%, rgba(245, 230, 211, 0.95) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(107, 68, 35, 0.12);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(139, 157, 131, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--sage-green), var(--earth-clay), var(--moss));
+            border-radius: 16px 16px 0 0;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(107, 68, 35, 0.15);
+        }
+
+        .card h2 {
+            color: var(--earth-brown);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .practice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .practice-card {
+            background: linear-gradient(135deg, rgba(255, 248, 231, 0.95) 0%, rgba(245, 230, 211, 0.95) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--sage-green);
+            box-shadow: 0 6px 20px rgba(107, 68, 35, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(139, 157, 131, 0.3);
+        }
+
+        .practice-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(107, 68, 35, 0.15);
+        }
+
+        .practice-card h3 {
+            color: var(--earth-brown);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .practice-steps {
+            display: none;
+            padding-top: 1rem;
+            border-top: 1px solid var(--moss);
+            margin-top: 1rem;
+        }
+
+        .practice-steps.expanded {
+            display: block;
+            animation: expandDown 0.3s ease;
+        }
+
+        @keyframes expandDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        .practice-steps p {
+            color: var(--stone-gray);
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+        }
+
+        .arc-container {
+            background: rgba(255, 248, 231, 0.95);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border: 2px solid var(--moss);
+        }
+
+        .arc-path {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            background: rgba(245, 230, 211, 0.5);
+            border-radius: 8px;
+        }
+
+        .arc-step {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 2px solid var(--sage-green);
+            color: var(--earth-brown);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .arc-step:hover {
+            background: var(--sage-green);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(135, 168, 120, 0.3);
+        }
+
+        .arc-arrow {
+            color: var(--moss);
+            font-weight: 700;
+        }
+
+        .node-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(107, 68, 35, 0.8);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .node-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .node-modal-content {
+            background: linear-gradient(135deg, rgba(255, 248, 231, 0.98) 0%, rgba(245, 230, 211, 0.98) 100%);
+            max-width: 700px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 2px solid var(--sage-green);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .node-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--earth-clay);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .node-modal-close:hover {
+            background: var(--rust);
+            transform: rotate(90deg);
+        }
+
+        .node-modal h3 {
+            color: var(--earth-brown);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-modal .node-code {
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: var(--earth-clay);
+            background: rgba(184, 92, 56, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .node-modal p {
+            color: var(--stone-gray);
+            line-height: 1.9;
+            font-size: 1.1rem;
+        }
+
+        .circumstance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .circumstance-card {
+            background: linear-gradient(135deg, rgba(255, 248, 231, 0.95) 0%, rgba(245, 230, 211, 0.95) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(107, 68, 35, 0.1);
+            border: 1px solid rgba(139, 157, 131, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .circumstance-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(107, 68, 35, 0.15);
+        }
+
+        .circumstance-card h3 {
+            color: var(--earth-clay);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .circumstance-nodes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quote-block {
+            background: linear-gradient(135deg, var(--earth-brown) 0%, var(--deep-forest) 100%);
+            color: var(--cream);
+            padding: 2.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(107, 68, 35, 0.2);
+            border: 1px solid rgba(139, 157, 131, 0.3);
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .quote-attribution {
+            text-align: right;
+            opacity: 0.85;
+            font-size: 1rem;
+        }
+
+        .dedication-block {
+            background: linear-gradient(135deg, rgba(253, 164, 175, 0.15) 0%, rgba(192, 132, 252, 0.15) 100%);
+            border: 2px solid var(--earth-clay);
+            padding: 2.5rem;
+            border-radius: 16px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(184, 92, 56, 0.15);
+            text-align: center;
+        }
+
+        .dedication-block h3 {
+            color: var(--earth-clay);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .dedication-block p {
+            color: var(--earth-brown);
+            line-height: 1.9;
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .dedication-date {
+            color: var(--stone-gray);
+            font-size: 0.95rem;
+            font-style: normal;
+            margin-top: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 1.5rem;
+            border: 2px solid var(--moss);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: Georgia, 'Times New Roman', serif;
+            resize: vertical;
+            background: rgba(255, 248, 231, 0.95);
+            color: var(--earth-brown);
+            line-height: 1.8;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--sage-green);
+            box-shadow: 0 0 0 3px rgba(135, 168, 120, 0.2);
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--sage-green) 0%, var(--soft-sage) 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(135, 168, 120, 0.3);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(135, 168, 120, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 1rem; }
+            .card { padding: 1.5rem; }
+            .node-modal-content { padding: 1.5rem; margin: 1rem; }
+            .dedication-block { padding: 1.5rem; }
+        }
+    </style>
+    <script>
+        // Define all functions FIRST before any HTML references them
+        let journalEntries = [];
+
+        const nodeDatabase = {
+            'MYR-WEL-001': {
+                title: 'Bodhicitta Definition',
+                content: 'When loving-kindness and compassion become unlimited, vast, and really deep, that is what we call bodhicitta. It is the awakened heart—the wish to free all beings from suffering and lead them to lasting happiness.'
+            },
+            'MYR-WEL-009': {
+                title: 'Appreciation Meditation',
+                content: 'Appreciation of what you already have. This becomes the foundation for everything else. When the mind rests in gratitude for this moment, this breath, this life—spaciousness naturally arises.'
+            },
+            'CH1-001': {
+                title: 'Lightning Glimpses',
+                content: 'Brief moments when compassion arises naturally, without effort. These glimpses show what is possible and point the way forward. They are invitations to recognize what already lives in the heart.'
+            },
+            'CH1-003': {
+                title: 'Thinking Bigger',
+                content: 'The essence of the mahayana is thinking bigger. Not just your own liberation, but the liberation of all beings. This shifts the center of gravity from "me" to "we"—and paradoxically, this brings greater peace.'
+            },
+            'CH1-004': {
+                title: 'Dungeons of Samsara',
+                content: 'Doing the same thing over and over thinking we will get different results. The definition of our predicament. Until we see the pattern clearly, we remain trapped in cycles of our own making.'
+            },
+            'CH3-001': {
+                title: 'Two Types of Bodhicitta',
+                content: 'Aspiration bodhicitta is the heartfelt wish that all beings be free from suffering. Application bodhicitta is that wish put into action through generosity, discipline, patience, effort, meditation, and wisdom.'
+            },
+            'CH3-007': {
+                title: 'Shenpa - The Hook',
+                content: 'That moment when you get hooked. The urge to scratch an itch. The moment before we act on habit. Catching this is the work. When you feel the tightening, pause. Breathe. Let it pass without following it.'
+            },
+            'CH8-002': {
+                title: 'Self-Cherishing Problem',
+                content: 'All the joy the world contains has come through wishing happiness for others. All the misery the world contains has come through wanting pleasure for oneself. Self-cherishing is the root; compassion is the cure.'
+            },
+            'CH8-003': {
+                title: 'Equalizing Self and Other',
+                content: 'See that others want happiness exactly as you do. Their happiness matters as much as yours. This is the first step in dissolving ego boundaries—recognizing the shared wish beneath all our differences.'
+            },
+            'CH8-004': {
+                title: 'Exchanging Self and Other',
+                content: 'Step out of your center and inhabit another perspective. Picture them clearly—what fears ripple beneath their calm? How might they see you? This practice cracks the illusion that your perspective is the only real one.'
+            },
+            'CH8-006': {
+                title: 'Meditation Supports Both Types',
+                content: 'Formal practice deepens aspiration and steadies application. Sitting strengthens the resolve to benefit others and trains the mind to meet experience with compassion rather than reactivity.'
+            },
+            'CH9-001': {
+                title: 'Prajñā as Crown Jewel',
+                content: 'Wisdom illuminates all other perfections—generosity, discipline, patience, effort, and meditation—making them vast, effortless, and free from attachment to outcome. Without wisdom, compassion burns out. With it, compassion becomes boundless.'
+            },
+            'CH9-002': {
+                title: 'Emptiness of Self',
+                content: 'If no self or "I" exists at all, what is there left for fears to terrify? When awareness looks directly at "me," the "me" becomes object, and awareness becomes larger than it. If you cannot find the self, rest in that openness—that is freedom.'
+            },
+            'L6-001': {
+                title: 'Do Not Block, Just Be',
+                content: 'You do not need to go beyond that. Just be "as it is." When we see the nature of phenomena as it is, our mind automatically goes beyond. Stop trying to fix, improve, or transcend. Simply rest in what is already here.'
+            },
+            'L6-003': {
+                title: 'Inner Holiday',
+                content: 'The moment of letting go, stopping, dropping. When we just be, there is a glimpse of real freedom. That is emptiness practice, that is wisdom. Take inner holidays throughout your day—brief pauses where you stop the doing and rest in being.'
+            },
+            'L6-006': {
+                title: 'Mind of Letting Go',
+                content: 'In helping others, practice letting go of outcomes. Your job is to show up with presence and care. The results are not yours to control. This protects you from burnout and keeps compassion flowing naturally.'
+            },
+            'L6-011': {
+                title: 'Dreamlike Reality',
+                content: 'All phenomena are like a dream—vivid, meaningful, yet without solid substance. This does not mean nothing matters; it means we can engage fully while holding our experience lightly. Freedom lives in this lightness.'
+            },
+            'L6-012': {
+                title: 'Bring Into Daily Life',
+                content: 'Dream pizza has temperature, taste, good for dream stomach—yet not real. Not existing yet there. There but does not exist. That is emptiness. Enjoy your dreamlike coffee. Live your dreamlike day. Everything matters and nothing is fixed.'
+            }
+        };
+
+        function navigateTo(sectionId, buttonElement) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            buttonElement.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function togglePractice(practiceId) {
+            const practice = document.getElementById(practiceId);
+            practice.classList.toggle('expanded');
+        }
+
+        function showNodeDetail(nodeId) {
+            const node = nodeDatabase[nodeId];
+            if (node) {
+                document.getElementById('modalNodeCode').textContent = nodeId;
+                document.getElementById('modalNodeTitle').textContent = node.title;
+                document.getElementById('modalNodeContent').textContent = node.content;
+                document.getElementById('nodeModal').classList.add('active');
+            }
+        }
+
+        function closeNodeModal() {
+            document.getElementById('nodeModal').classList.remove('active');
+        }
+
+        function handleModalClick(event) {
+            if (event.target.id === 'nodeModal') {
+                closeNodeModal();
+            }
+        }
+
+        function saveJournalEntry() {
+            const text = document.getElementById('journalText').value;
+            const feedback = document.getElementById('journalFeedback');
+            
+            if (text.trim()) {
+                const timestamp = new Date().toLocaleString();
+                journalEntries.push({ text, timestamp });
+                
+                feedback.style.display = 'block';
+                feedback.style.background = 'rgba(135, 168, 120, 0.2)';
+                feedback.style.color = 'var(--deep-forest)';
+                feedback.textContent = '✓ Entry saved at ' + timestamp;
+                
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 3000);
+            } else {
+                feedback.style.display = 'block';
+                feedback.style.background = 'rgba(184, 92, 56, 0.2)';
+                feedback.style.color = 'var(--earth-clay)';
+                feedback.textContent = '⚠ Please write something before saving';
+                
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function clearJournalEntry() {
+            if (confirm('Clear this entry? (Unsaved changes will be lost)')) {
+                document.getElementById('journalText').value = '';
+            }
+        }
+
+        function viewSavedEntries() {
+            const display = document.getElementById('savedEntriesDisplay');
+            
+            if (display.style.display === 'block') {
+                display.style.display = 'none';
+                return;
+            }
+            
+            if (journalEntries.length === 0) {
+                display.innerHTML = '<div style="padding: 2rem; text-align: center; background: rgba(139, 157, 131, 0.1); border-radius: 12px; color: var(--stone-gray);"><p>No saved entries yet. Write something and click "Save Entry" to begin your journal.</p></div>';
+            } else {
+                let entriesHTML = '<h3 style="color: var(--earth-clay); margin-bottom: 1rem;">Saved Entries</h3>';
+                const reversedEntries = [...journalEntries].reverse();
+                reversedEntries.forEach((entry) => {
+                    entriesHTML += '<div style="background: rgba(255, 248, 231, 0.9); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid var(--sage-green);"><div style="color: var(--stone-gray); font-size: 0.9rem; margin-bottom: 0.5rem;">' + entry.timestamp + '</div><div style="color: var(--earth-brown); line-height: 1.8;">' + entry.text + '</div></div>';
+                });
+                display.innerHTML = entriesHTML;
+            }
+            
+            display.style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🙏 Way of the Bodhisattva</h1>
+            <p class="subtitle">An Interactive Journey Through Living Wisdom</p>
+        </div>
+
+        <div class="nav-pills">
+            <button class="nav-pill active" onclick="navigateTo('welcome', this)">🏠 Welcome</button>
+            <button class="nav-pill" onclick="navigateTo('practices', this)">🧘 Practices</button>
+            <button class="nav-pill" onclick="navigateTo('arcs', this)">🌀 Teaching Arcs</button>
+            <button class="nav-pill" onclick="navigateTo('circumstances', this)">🧭 Life Situations</button>
+            <button class="nav-pill" onclick="navigateTo('journal', this)">✍️ Journal</button>
+        </div>
+
+        <div id="welcome" class="section active">
+            <div class="card">
+                <h2>Welcome to Your Journey</h2>
+                <p style="line-height: 1.8; color: var(--stone-gray); margin-bottom: 1rem;">
+                    This companion guide brings the timeless wisdom of Shantideva's <em>Way of the Bodhisattva</em> 
+                    into your daily life. The Tibetan word <em>gom</em> means "to become familiar"—this is a practice 
+                    of returning again and again, until wisdom moves from concept into lived experience.
+                </p>
+            </div>
+
+            <div class="quote-block">
+                <div class="quote-text">
+                    "When loving-kindness and compassion become unlimited, vast, and really deep, 
+                    that is what we call bodhicitta."
+                </div>
+                <div class="quote-attribution">— Mingyur Rinpoche</div>
+            </div>
+
+            <div class="dedication-block">
+                <h3>🌹 Dedication</h3>
+                <p>
+                    May this work serve the liberation of all beings.
+                </p>
+                <p>
+                    May all the merit of this effort go to <strong>Rose Mary</strong>, who is a deep and pervasive 
+                    inspiration to me and inspires me to keep trying.
+                </p>
+                <p>
+                    Through her example, may all beings find the courage to walk the bodhisattva path 
+                    with tenderness, persistence, and an awakened heart.
+                </p>
+                <div class="dedication-date">
+                    October 17, 2025
+                </div>
+            </div>
+        </div>
+
+        <div id="practices" class="section">
+            <div class="card">
+                <h2>Guided Practices (PRAC Series)</h2>
+                <p style="color: var(--stone-gray); margin-bottom: 2rem; line-height: 1.8;">
+                    These six practices form the foundation of your daily cultivation. Each one brings a teaching from concept into lived experience.
+                </p>
+
+                <div class="practice-grid">
+                    <div class="practice-card" onclick="togglePractice('prac1')">
+                        <h3>PRAC-L1: Bodhicitta Motivation</h3>
+                        <p style="color: var(--stone-gray);">Begin each day by setting the intention to benefit all beings.</p>
+                        <div id="prac1" class="practice-steps">
+                            <p><strong>Practice:</strong></p>
+                            <p>Sit quietly and reflect on the suffering of others, letting natural compassion arise. Then formally take the aspiration to use this day, this life, for the welfare of all.</p>
+                            <p><strong>Steps:</strong></p>
+                            <p>1. Take three deep breaths to settle<br>
+                            2. Bring to mind the suffering in the world<br>
+                            3. Notice the natural wish for beings to be free from pain<br>
+                            4. Speak the aspiration: "May this day benefit all beings"<br>
+                            5. Let this intention infuse your actions throughout the day</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice('prac2')">
+                        <h3>PRAC-L2: Welcoming Elements</h3>
+                        <p style="color: var(--stone-gray);">Practice complete hospitality toward your experience.</p>
+                        <div id="prac2" class="practice-steps">
+                            <p><strong>Practice:</strong></p>
+                            <p>Sit in meditation and welcome whatever arises. When a thought comes, welcome it. When an emotion comes, welcome it. When a sensation comes, welcome it.</p>
+                            <p><strong>Steps:</strong></p>
+                            <p>1. Settle into a comfortable posture<br>
+                            2. As each experience arises, silently say "welcome"<br>
+                            3. Notice the shift from resistance to receptivity<br>
+                            4. Let everything be a guest in the spacious inn of awareness<br>
+                            5. Practice for 15-20 minutes</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice('prac3')">
+                        <h3>PRAC-L3: Patience & Joyful Effort</h3>
+                        <p style="color: var(--stone-gray);">Choose one small practice and do it with joy.</p>
+                        <div id="prac3" class="practice-steps">
+                            <p><strong>Practice:</strong></p>
+                            <p>Not forcing, not striving, but with genuine interest and delight. Notice when effort becomes strain, and return to natural joy.</p>
+                            <p><strong>Steps:</strong></p>
+                            <p>1. Choose a simple practice (breath awareness, walking, journaling)<br>
+                            2. Begin with curiosity rather than obligation<br>
+                            3. Notice when you're pushing—pause and soften<br>
+                            4. Find the natural delight in simply being present<br>
+                            5. Let joy be the fuel, not willpower</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice('prac4')">
+                        <h3>PRAC-L4: Recognizing Basic Goodness</h3>
+                        <p style="color: var(--stone-gray);">This awareness itself is basic goodness—already here.</p>
+                        <div id="prac4" class="practice-steps">
+                            <p><strong>Practice:</strong></p>
+                            <p>Sit and rest in awareness. Notice the simple fact of being conscious, aware, present. Not something to achieve, but to recognize.</p>
+                            <p><strong>Steps:</strong></p>
+                            <p>1. Settle and let breath find its rhythm<br>
+                            2. Notice: you are aware right now<br>
+                            3. This awareness is not broken or lacking<br>
+                            4. Rest in the simple fact of knowing<br>
+                            5. This is basic goodness—complete as it is</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice('prac5')">
+                        <h3>PRAC-L5: Investigating Self (Analytical)</h3>
+                        <p style="color: var(--stone-gray);">Where is this "I"? Look carefully.</p>
+                        <div id="prac5" class="practice-steps">
+                            <p><strong>Practice:</strong></p>
+                            <p>Ask: Where is this "I"? Is it in the body? In the mind? In thoughts? In feelings? When you look directly, can you find a solid, permanent self anywhere?</p>
+                            <p><strong>Steps:</strong></p>
+                            <p>1. Sit quietly and notice the sense of "I"<br>
+                            2. Look in the body—is "I" here?<br>
+                            3. Look in thoughts—is "I" these passing words?<br>
+                            4. Look in feelings—is "I" these shifting sensations?<br>
+                            5. Rest in the gap of not-finding</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-card" onclick="togglePractice('prac6')">
+                        <h3>PRAC-L6: Investigating Self (Temporal)</h3>
+                        <p style="color: var(--stone-gray);">If the self changes constantly, where is the permanent "I"?</p>
+                        <div id="prac6" class="practice-steps">
+                            <p><strong>Practice:</strong></p>
+                            <p>Notice that everything changes. The you of yesterday is not the you of today. The you of this morning is not the you of this moment.</p>
+                            <p><strong>Steps:</strong></p>
+                            <p>1. Recall yourself from a year ago—how different?<br>
+                            2. Notice yourself from this morning—already changed?<br>
+                            3. Feel the constant flux of sensation, thought, mood<br>
+                            4. Where in this river of change is the permanent "I"?<br>
+                            5. Rest in the seeing of constant transformation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="arcs" class="section">
+            <div class="card">
+                <h2>Teaching Arcs</h2>
+                <p style="color: var(--stone-gray); margin-bottom: 2rem; line-height: 1.8;">
+                    These arcs show developmental progressions through the teachings. <strong>Click any node code to see its full teaching.</strong>
+                </p>
+
+                <div class="arc-container">
+                    <h3 style="color: var(--earth-clay); margin-bottom: 1rem;">Bodhicitta Development Arc</h3>
+                    <p style="color: var(--stone-gray); font-style: italic; margin-bottom: 1rem;">The progressive unfolding of the awakened heart</p>
+                    <div class="arc-path">
+                        <span class="arc-step" onclick="showNodeDetail('MYR-WEL-001')">MYR-WEL-001</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH1-001')">CH1-001</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH3-001')">CH3-001</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH8-006')">CH8-006</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH9-001')">CH9-001</span>
+                    </div>
+                </div>
+
+                <div class="arc-container">
+                    <h3 style="color: var(--earth-clay); margin-bottom: 1rem;">Self-Dissolution Arc</h3>
+                    <p style="color: var(--stone-gray); font-style: italic; margin-bottom: 1rem;">Gradually dissolving ego boundaries through practice</p>
+                    <div class="arc-path">
+                        <span class="arc-step" onclick="showNodeDetail('CH8-002')">CH8-002</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH8-003')">CH8-003</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH8-004')">CH8-004</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('CH9-002')">CH9-002</span>
+                    </div>
+                </div>
+
+                <div class="arc-container">
+                    <h3 style="color: var(--earth-clay); margin-bottom: 1rem;">Wisdom Integration Arc</h3>
+                    <p style="color: var(--stone-gray); font-style: italic; margin-bottom: 1rem;">Bringing wisdom into every moment</p>
+                    <div class="arc-path">
+                        <span class="arc-step" onclick="showNodeDetail('CH9-001')">CH9-001</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('L6-001')">L6-001</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('L6-003')">L6-003</span>
+                        <span class="arc-arrow">→</span>
+                        <span class="arc-step" onclick="showNodeDetail('L6-012')">L6-012</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="circumstances" class="section">
+            <div class="card">
+                <h2>Wisdom for Life Situations</h2>
+                <p style="color: var(--stone-gray); margin-bottom: 2rem; line-height: 1.8;">
+                    When you need guidance in a specific moment, these maps point to relevant teachings. <strong>Click any node code to see its full teaching.</strong>
+                </p>
+
+                <div class="circumstance-grid">
+                    <div class="circumstance-card">
+                        <h3>😰 When Overwhelmed</h3>
+                        <p style="color: var(--stone-gray); margin-bottom: 1rem;">Start with appreciation, rest in what is, take inner holidays.</p>
+                        <div class="circumstance-nodes">
+                            <span class="arc-step" onclick="showNodeDetail('MYR-WEL-009')">MYR-WEL-009</span>
+                            <span class="arc-step" onclick="showNodeDetail('L6-003')">L6-003</span>
+                        </div>
+                    </div>
+
+                    <div class="circumstance-card">
+                        <h3>😤 When Angry</h3>
+                        <p style="color: var(--stone-gray); margin-bottom: 1rem;">Catch the hook before reacting, see afflictions as mirages.</p>
+                        <div class="circumstance-nodes">
+                            <span class="arc-step" onclick="showNodeDetail('CH3-007')">CH3-007</span>
+                            <span class="arc-step" onclick="showNodeDetail('CH8-004')">CH8-004</span>
+                        </div>
+                    </div>
+
+                    <div class="circumstance-card">
+                        <h3>😟 When Anxious</h3>
+                        <p style="color: var(--stone-gray); margin-bottom: 1rem;">Return to appreciation, investigate the self that fears.</p>
+                        <div class="circumstance-nodes">
+                            <span class="arc-step" onclick="showNodeDetail('MYR-WEL-009')">MYR-WEL-009</span>
+                            <span class="arc-step" onclick="showNodeDetail('CH9-002')">CH9-002</span>
+                        </div>
+                    </div>
+
+                    <div class="circumstance-card">
+                        <h3>🤝 When Helping Others</h3>
+                        <p style="color: var(--stone-gray); margin-bottom: 1rem;">Practice equalizing, let go of outcomes, avoid burnout.</p>
+                        <div class="circumstance-nodes">
+                            <span class="arc-step" onclick="showNodeDetail('CH8-003')">CH8-003</span>
+                            <span class="arc-step" onclick="showNodeDetail('L6-006')">L6-006</span>
+                        </div>
+                    </div>
+
+                    <div class="circumstance-card">
+                        <h3>🔄 When Stuck in Patterns</h3>
+                        <p style="color: var(--stone-gray); margin-bottom: 1rem;">Think bigger, recognize the dungeon, start manageable.</p>
+                        <div class="circumstance-nodes">
+                            <span class="arc-step" onclick="showNodeDetail('CH1-003')">CH1-003</span>
+                            <span class="arc-step" onclick="showNodeDetail('CH1-004')">CH1-004</span>
+                        </div>
+                    </div>
+
+                    <div class="circumstance-card">
+                        <h3>🧠 When Caught in Concepts</h3>
+                        <p style="color: var(--stone-gray); margin-bottom: 1rem;">Do not block, just be. Rest in dreamlike nature.</p>
+                        <div class="circumstance-nodes">
+                            <span class="arc-step" onclick="showNodeDetail('L6-001')">L6-001</span>
+                            <span class="arc-step" onclick="showNodeDetail('L6-011')">L6-011</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="journal" class="section">
+            <div class="card">
+                <h2>Reflective Journal</h2>
+                <textarea id="journalText" placeholder="Write your reflections here...
+
+This is your space for contemplation. Consider:
+- What teachings are alive for you today?
+- What patterns are you noticing?
+- Where is compassion flowing naturally?
+- Where are you getting stuck?
+
+Remember: These reflections are stored only during your current session."></textarea>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="saveJournalEntry()">💾 Save Entry</button>
+                    <button class="btn" style="background: white; color: var(--earth-brown); border: 2px solid var(--moss);" onclick="clearJournalEntry()">🗑️ Clear</button>
+                    <button class="btn" style="background: linear-gradient(135deg, var(--earth-clay) 0%, var(--rust) 100%);" onclick="viewSavedEntries()">📖 View Saved</button>
+                </div>
+                <div id="journalFeedback" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 12px;"></div>
+                <div id="savedEntriesDisplay" style="display: none; margin-top: 2rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nodeModal" class="node-modal" onclick="handleModalClick(event)">
+        <div class="node-modal-content">
+            <button class="node-modal-close" onclick="closeNodeModal()">×</button>
+            <span class="node-code" id="modalNodeCode"></span>
+            <h3 id="modalNodeTitle"></h3>
+            <p id="modalNodeContent"></p>
+        </div>
+    </div>
+</body>
+</html>
